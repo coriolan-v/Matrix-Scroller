@@ -24,11 +24,6 @@ BLEBas  blebas;  // battery
 void setup()
 {
   Serial.begin(115200);
-
-#if CFG_DEBUG
-  // Blocking wait for connection when debug mode is enabled via IDE
-  while ( !Serial ) yield();
-#endif
   
   Serial.println("Bluefruit52 BLEUART Example");
   Serial.println("---------------------------\n");
