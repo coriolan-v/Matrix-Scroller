@@ -1,16 +1,3 @@
-/*********************************************************************
- This is an example for our nRF52 based Bluefruit LE modules
-
- Pick one up today in the adafruit shop!
-
- Adafruit invests time and resources providing this open source code,
- please support Adafruit and open-source hardware by purchasing
- products from Adafruit!
-
- MIT license, check LICENSE for more information
- All text above, and the splash screen below must be included in
- any redistribution
-*********************************************************************/
 #include <bluefruit.h>
 #include <Adafruit_LittleFS.h>
 #include <InternalFileSystem.h>
@@ -21,10 +8,8 @@ BLEDis  bledis;  // device information
 BLEUart bleuart; // uart over ble
 BLEBas  blebas;  // battery
 
-void setup()
+void setupBLE()
 {
-  Serial.begin(115200);
-  
   Serial.println("Bluefruit52 BLEUART Example");
   Serial.println("---------------------------\n");
 
@@ -42,7 +27,7 @@ void setup()
   Bluefruit.setTxPower(4);    // Check bluefruit.h for supported values
   //Bluefruit.setName(getMcuUniqueID()); // useful testing with multiple central connections
   Bluefruit.Periph.setConnectCallback(connect_callback);
- // Bluefruit.Periph.setDisconnectCallback(disconnect_callback);
+  Bluefruit.Periph.setDisconnectCallback(disconnect_callback);
 
   // To be consistent OTA DFU should be added first if it exists
   bledfu.begin();
@@ -94,38 +79,6 @@ void startAdv(void)
   Bluefruit.Advertising.start(0);                // 0 = Don't stop advertising after n seconds  
 }
 
-String receivedString = "";
-void loop()
-{
-  // Forward data from HW Serial to BLEUART
-  while (Serial.available())
-  {
-    // Delay to wait for enough input, since we have a limited transmission buffer
-    delay(2);
-
-    uint8_t buf[64];
-    int count = Serial.readBytes(buf, sizeof(buf));
-    bleuart.write( buf, count );
-  }
-
-  // Forward from BLEUART to HW Serial
-  while ( bleuart.available() )
-  {
-    uint8_t ch;
-    char newchart = bleuart.read();
-    ch = (uint8_t) newchart;
-    //Serial.write(ch);
-    receivedString += newchart;
-    
-
-    if(ch == '\n'){
-      //Serial.println("new line");
-      Serial.print("received: "); Serial.println(receivedString);
-    }
-  }
-
-  // Color
-}
 
 // callback invoked when central connects
 void connect_callback(uint16_t conn_handle)
@@ -152,4 +105,35 @@ void disconnect_callback(uint16_t conn_handle, uint8_t reason)
 
   Serial.println();
   Serial.print("Disconnected, reason = 0x"); Serial.println(reason, HEX);
+}
+
+String receivedString = "";
+void loopBLE()
+{
+   // Forward data from HW Serial to BLEUART
+  while (Serial.available())
+  {
+    // Delay to wait for enough input, since we have a limited transmission buffer
+    delay(2);
+
+    uint8_t buf[64];
+    int count = Serial.readBytes(buf, sizeof(buf));
+    bleuart.write( buf, count );
+  }
+
+  // Forward from BLEUART to HW Serial
+  while ( bleuart.available() )
+  {
+    uint8_t ch;
+    char newchart = bleuart.read();
+    ch = (uint8_t) newchart;
+    //Serial.write(ch);
+    receivedString += newchart;
+    
+
+    if(ch == '\n'){
+      //Serial.println("new line");
+      Serial.print("received: "); Serial.println(receivedString);
+    }
+  }
 }
