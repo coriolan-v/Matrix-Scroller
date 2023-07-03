@@ -4,7 +4,7 @@ String sentence2 = "You're doing great!";
 String sentence3 = "Don't worry about it";
 String sentence4 = "The current time is......... NOW";
 String sentence5 = "You look good!";
-String sentence6 = "Là, tout n'est qu'ordre et beauté, Luxe, calme et volupté.";
+String sentence6 = "La, tout n'est qu'ordre et beaute, Luxe, calme et volupte.";
 String sentence7 = "¡Arriba, abajo, al centro, pa' dentro!";
 String sentence8 = "";
 String sentence9 = "";
@@ -100,7 +100,7 @@ void setup(void) {
 bool noFont = true;
 // LOOP - RUNS REPEATEDLY AFTER SETUP --------------------------------------
 unsigned long prevMill;
-int interval = 25;
+int interval = 35;
 int pos_text_line_1 = 15;
 int pos_text_line_2 = 30;
 void loop(void) {
@@ -163,8 +163,11 @@ unsigned long prevMill_scrollSentence = 0;
 unsigned long prevMill_newSentence = 0;
 unsigned long prevMill_fps = 0;
 
-int sentenceIndex = 1;
+int sentenceIndex = 0;
 int xposition = 64;
+
+String currentSentence;
+
 void newLoopMatrix() {
 
   if(millis() - prevMill_scrollSentence > 5000) {
@@ -172,8 +175,16 @@ void newLoopMatrix() {
 
     Serial.println("new sentence");
     sentenceIndex++;
+    
     if(sentenceIndex > 10) sentenceIndex = 0;
+    Serial.println(sentenceIndex);
+
+    
+
+    xposition = 128;
   }
+
+
 
   
 
@@ -186,6 +197,8 @@ void newLoopMatrix() {
     matrix.setTextColor(color_line_1);
     matrix.setCursor(xposition, 5);
 
+    currentSentence = "";
+
     if(sentenceIndex == 0) matrix.print(sentence1);
     if(sentenceIndex == 1) matrix.print(sentence2);
     if(sentenceIndex == 2) matrix.print(sentence3);
@@ -197,13 +210,19 @@ void newLoopMatrix() {
     if(sentenceIndex == 8) matrix.print(sentence9);
     if(sentenceIndex == 9) matrix.print(sentence10);
 
+  
     
 
     // matrix.setTextColor(color_line_1);
     // matrix.setCursor(xposition, 20);
     // matrix.print(sentence1_b);
 
-    if(xposition > -250) xposition = xposition - 1;// xposition--;
+    // if(xposition > -250) xposition = xposition - 1;// xposition--;
+    // //}
+
+    // if(xposition <= -250) xposition = 128;
+
+     if ((--xposition) < -250) xposition = matrix.width();
 
     Serial.println(xposition);
 

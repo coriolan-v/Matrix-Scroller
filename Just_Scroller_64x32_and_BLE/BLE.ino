@@ -134,11 +134,11 @@ void loopBLE()
     if(ch == '\n'){
       //Serial.println("new line");
       Serial.print("received: "); Serial.println(receivedString);
-      if(receivedString.length() > 0){
+      if(sentence8.length() == 0){
         sentence8 = receivedString;
-      } else if(receivedString.length() > 0){
+      } else if(sentence9.length() == 0){
         sentence9 = receivedString;
-      } else if(receivedString.length() > 0){
+      } else if(sentence10.length() == 0){
         sentence10 = receivedString;
       } 
     }
