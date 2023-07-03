@@ -1,4 +1,4 @@
-
+#include <bluefruit.h>
 #include <Adafruit_LittleFS.h>
 #include <InternalFileSystem.h>
 
@@ -30,19 +30,19 @@ void setupBLE()
   Bluefruit.Periph.setDisconnectCallback(disconnect_callback);
 
   // To be consistent OTA DFU should be added first if it exists
-  bledfu.begin();
+//  bledfu.begin();
 
   // Configure and Start Device Information Service
-  bledis.setManufacturer("Adafruit Industries");
-  bledis.setModel("Bluefruit Feather52");
-  bledis.begin();
+  // bledis.setManufacturer("Adafruit Industries");
+  // bledis.setModel("Bluefruit Feather52");
+  // bledis.begin();
 
   // Configure and Start BLE Uart Service
   bleuart.begin();
 
   // Start BLE Battery Service
-  blebas.begin();
-  blebas.write(100);
+  // blebas.begin();
+  // blebas.write(100);
 
   // Set up and start advertising
   startAdv();
@@ -134,6 +134,13 @@ void loopBLE()
     if(ch == '\n'){
       //Serial.println("new line");
       Serial.print("received: "); Serial.println(receivedString);
+      if(receivedString.length() > 0){
+        sentence8 = receivedString;
+      } else if(receivedString.length() > 0){
+        sentence9 = receivedString;
+      } else if(receivedString.length() > 0){
+        sentence10 = receivedString;
+      } 
     }
   }
 }

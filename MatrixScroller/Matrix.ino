@@ -21,7 +21,13 @@ uint8_t oePin = PIN_SERIAL1_TX;
 
 // Create a 32-pixel tall, 64 pixel wide matrix with the defined pins
 Adafruit_Protomatter matrix(
-  64, 4, 1, rgbPins, 4, addrPins, clockPin, latchPin, oePin, false);
+  128,          // Matrix width in pixels
+  4,           // Bit depth -- 6 here provides maximum color options
+  1, rgbPins,  // # of matrix chains, array of 6 RGB pins for each
+  4, addrPins, // # of address pins (height is inferred), array of pins
+  clockPin, latchPin, oePin, // Other matrix control pins
+  true);       // HERE IS THE MAGIC FOR DOUBLE-BUFFERING!
+
 // Sundry globals used for animation ---------------------------------------
 
 int16_t textX = matrix.width(),  // Current text position (X)

@@ -1,4 +1,18 @@
 // Use this website to calculate the color code: http://www.barth-dev.de/online/rgb565-color-picker/
+String sentence1 = "Is there a problem, officer?";
+String sentence2 = "You're doing great!";
+String sentence3 = "Don't worry about it";
+String sentence4 = "The current time is......... NOW";
+String sentence5 = "You look good!";
+String sentence6 = "Là, tout n'est qu'ordre et beauté, Luxe, calme et volupté.";
+String sentence7 = "¡Arriba, abajo, al centro, pa' dentro!";
+String sentence8 = "";
+String sentence9 = "";
+String sentence10 = "";
+
+
+
+
 uint16_t color_line_1 = 0x99F4;
 uint16_t color_line_2 = 0xE820;
 
@@ -40,6 +54,7 @@ char text_line_2[MAX_INPUT];  // Buffer to hold scrolling message text
 
 void setup(void) {
   Serial.begin(9600);
+  setupBLE();
 
   // Initialize matrix...
   ProtomatterStatus status = matrix.begin();
@@ -55,8 +70,8 @@ void setup(void) {
   // But we DO initialize some things we plan to animate...
 
   // Set up the scrolling message...
-  sprintf(text_line_1, "Jason Bruges Studio artwork text here");
-  sprintf(text_line_2, "Second Line of text to be printed");
+//  sprintf(text_line_1, (char)sentence1_a);
+ // sprintf(text_line_2, (char)sentence1_b);
 
   //matrix.setFont(&FreeSans9pt7b);  // Use nice bitmap font
   matrix.setTextWrap(false);               // Allow text off edge
@@ -78,6 +93,8 @@ void setup(void) {
   // ballcolor[0] = matrix.color565(0, 20, 0); // Dark green
   // ballcolor[1] = matrix.color565(0, 0, 20); // Dark blue
   // ballcolor[2] = matrix.color565(20, 0, 0); // ark red
+
+  
 }
 
 bool noFont = true;
@@ -88,45 +105,113 @@ int pos_text_line_1 = 15;
 int pos_text_line_2 = 30;
 void loop(void) {
 
-  if (millis() - prevMill > interval) {
-    prevMill = millis();
+  loopBLE();
 
-    // Every frame, we clear the background and draw everything anew.
-    // This happens "in the background" with double buffering, that's
-    // why you don't see everything flicker. It requires double the RAM,
-    // so it's not practical for every situation.
+  newLoopMatrix();
 
-    matrix.fillScreen(0);  // Fill background black
+  // if (millis() - prevMill > interval) {
+  //   prevMill = millis();
 
-    // Draw the big scrolly text
-    matrix.setTextColor(color_line_1);
-    if(noFont == true){
-      matrix.setCursor(textX, pos_text_line_1 - 10);
-    } else {
-    matrix.setCursor(textX, pos_text_line_1);
-    }
+  //   // Every frame, we clear the background and draw everything anew.
+  //   // This happens "in the background" with double buffering, that's
+  //   // why you don't see everything flicker. It requires double the RAM,
+  //   // so it's not practical for every situation.
+
+  //   matrix.fillScreen(0);  // Fill background black
+
+  //   // Draw the big scrolly text
+  //   matrix.setTextColor(color_line_1);
+  //   if(noFont == true){
+  //     matrix.setCursor(textX, pos_text_line_1 - 10);
+  //   } else {
+  //   matrix.setCursor(textX, pos_text_line_1);
+  //   }
    
-    matrix.print(text_line_1);
+  //   matrix.print(text_line_1);
 
-    matrix.setTextColor(color_line_2);
-    if(noFont == true){
-      matrix.setCursor(textX, pos_text_line_2 - 10);
-    } else {
-    matrix.setCursor(textX, pos_text_line_2);
-    }
-    matrix.print(text_line_2);
+  //   matrix.setTextColor(color_line_2);
+  //   if(noFont == true){
+  //     matrix.setCursor(textX, pos_text_line_2 - 10);
+  //   } else {
+  //   matrix.setCursor(textX, pos_text_line_2);
+  //   }
+  //   matrix.print(text_line_2);
 
-    // Update text position for next frame. If text goes off the
-    // left edge, reset its position to be off the right edge.
-    if ((--textX) < textMin) textX = matrix.width();
+  //   // Update text position for next frame. If text goes off the
+  //   // left edge, reset its position to be off the right edge.
+  //   if ((--textX) < textMin) textX = matrix.width();
 
-    matrix.show();
-  }
+  //   matrix.show();
+  // }
 
 
   //delay(10); // 20 milliseconds = ~50 frames/second
 
   readtext_line_1ing();
+}
+
+//unsigned long prevMill;
+//int interval = 25;
+// int pos_text_line_1 = 16;
+// int pos_text_line_2 = 48;
+
+int interval_scrollSentence = 10000;
+int internal_newSentence = 30000;
+int interval_fps = 25;
+
+unsigned long prevMill_scrollSentence = 0;
+unsigned long prevMill_newSentence = 0;
+unsigned long prevMill_fps = 0;
+
+int sentenceIndex = 1;
+int xposition = 64;
+void newLoopMatrix() {
+
+  if(millis() - prevMill_scrollSentence > 5000) {
+    prevMill_scrollSentence  = millis();
+
+    Serial.println("new sentence");
+    sentenceIndex++;
+    if(sentenceIndex > 10) sentenceIndex = 0;
+  }
+
+  
+
+  if (millis() - prevMill_fps > interval_fps) {
+    prevMill_fps = millis();
+
+    matrix.fillScreen(0);  // Fill background black
+
+    // Draw the big scrolly text
+    matrix.setTextColor(color_line_1);
+    matrix.setCursor(xposition, 5);
+
+    if(sentenceIndex == 0) matrix.print(sentence1);
+    if(sentenceIndex == 1) matrix.print(sentence2);
+    if(sentenceIndex == 2) matrix.print(sentence3);
+    if(sentenceIndex == 3) matrix.print(sentence4);
+    if(sentenceIndex == 4) matrix.print(sentence5);
+    if(sentenceIndex == 5) matrix.print(sentence6);
+    if(sentenceIndex == 6) matrix.print(sentence7);
+    if(sentenceIndex == 7) matrix.print(sentence8);
+    if(sentenceIndex == 8) matrix.print(sentence9);
+    if(sentenceIndex == 9) matrix.print(sentence10);
+
+    
+
+    // matrix.setTextColor(color_line_1);
+    // matrix.setCursor(xposition, 20);
+    // matrix.print(sentence1_b);
+
+    if(xposition > -250) xposition = xposition - 1;// xposition--;
+
+    Serial.println(xposition);
+
+    matrix.show();
+
+  }
+
+    
 }
 
 void readtext_line_1ing() {
