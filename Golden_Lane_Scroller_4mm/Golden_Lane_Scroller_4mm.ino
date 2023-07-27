@@ -13,8 +13,8 @@ uint16_t color_line_2 = 0xE820;
 #include <Adafruit_Protomatter.h>
 
 // Special nRF52840 FeatherWing pinout
-uint8_t rgbPins[]  = {6, A5, A1, A0, A4, 11};
-uint8_t addrPins[] = {10, 5, 13, 9};
+uint8_t rgbPins[]  = {6, A5, A1, A0, A4, 11}; // R1, G1, B1, R2, G2, B2
+uint8_t addrPins[] = {10, 5, 13, 9}; //  A, B, C, D
 uint8_t clockPin   = 12;
 uint8_t latchPin   = PIN_SERIAL1_RX;
 uint8_t oePin      = PIN_SERIAL1_TX;
@@ -102,7 +102,7 @@ void loop(void) {
 
     matrix.setTextColor(color_line_2);
     
-    matrix.setCursor(textX, 10);
+    matrix.setCursor(textX, 15);
     
     matrix.print(text_line_2);
 
