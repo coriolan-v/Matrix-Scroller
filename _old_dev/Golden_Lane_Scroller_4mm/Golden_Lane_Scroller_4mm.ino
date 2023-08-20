@@ -78,7 +78,7 @@ bool noFont = true;
 // LOOP - RUNS REPEATEDLY AFTER SETUP --------------------------------------
 unsigned long prevMill;
 int interval = 25;
-int pos_text_line_1 = 16;
+int pos_text_line_1 = 20;
 int pos_text_line_2 = 48;
 void loop(void) {
 
@@ -95,14 +95,14 @@ void loop(void) {
     // Draw the big scrolly text
     matrix.setTextColor(color_line_1);
     
-      matrix.setCursor(textX, 1);
+      matrix.setCursor(textX, 7);
     
    
     matrix.print(text_line_1);
 
     matrix.setTextColor(color_line_2);
     
-    matrix.setCursor(textX, 15);
+    matrix.setCursor(textX, 30);
     
     matrix.print(text_line_2);
 

@@ -121,6 +121,9 @@ void loopBLE()
     bleuart.write( buf, count );
   }
 
+  char receivedChar[100];
+  int charIndex = 0;
+
   // Forward from BLEUART to HW Serial
   while ( bleuart.available() )
   {
@@ -129,18 +132,37 @@ void loopBLE()
     ch = (uint8_t) newchart;
     //Serial.write(ch);
     receivedString += newchart;
-    
+
+    if(liveSentenceIndex > MaxSentences)
+    {
+      Serial.println("too many sentences added!");
+      return;
+    }
+
+    if(charIndex < 100) receivedChar[charIndex] = newchart;
+    charIndex++;
 
     if(ch == '\n'){
       //Serial.println("new line");
-      Serial.print("received: "); Serial.println(receivedString);
-      if(sentence8.length() == 0){
-        sentence8 = receivedString;
-      } else if(sentence9.length() == 0){
-        sentence9 = receivedString;
-      } else if(sentence10.length() == 0){
-        sentence10 = receivedString;
-      } 
+        Serial.print("received new sentence: "); //Serial.println(receivedChar);
+        
+        for(int c = 0; c < 100; c++) sentences[liveSentenceIndex][c] = receivedChar[c];
+        
+        Serial.print(sentences[liveSentenceIndex]);
+
+        Serial.print("This sentence is: "); Serial.println(liveSentenceIndex);
+
+        sentenceIndex = liveSentenceIndex;
+
+        liveSentenceIndex++;
+
+        prevMill_newSentence  = millis(); // restart timer
+
+        matrix.fillScreen(0);  // Fill background black
+        xposition = matrix.width();
+       
+
+      
     }
   }
 }

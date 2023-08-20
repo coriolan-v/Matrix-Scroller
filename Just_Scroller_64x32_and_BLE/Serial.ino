@@ -1,138 +1,9 @@
-// Use this website to calculate the color code: http://www.barth-dev.de/online/rgb565-color-picker/
-uint16_t color_line_1 = 0x99F4;
-uint16_t color_line_2 = 0xE820;
-
-#define MAX_INPUT 1000
-
-#include <Adafruit_Protomatter.h>
-
- uint8_t rgbPins[]  = {6, A5, A1, A0, A4, 11};
-  uint8_t addrPins[] = {10, 5, 13, 9};
-  uint8_t clockPin   = 12;
-  uint8_t latchPin   = PIN_SERIAL1_RX;
-  uint8_t oePin      = PIN_SERIAL1_TX;
-
-/* ----------------------------------------------------------------------
-Matrix initialization is explained EXTENSIVELY in "simple" example sketch!
-It's very similar here, but we're passing "true" for the last argument,
-enabling double-buffering -- this permits smooth animation by having us
-draw in a second "off screen" buffer while the other is being shown.
-------------------------------------------------------------------------- */
-
-Adafruit_Protomatter matrix(
-  128,          // Matrix width in pixels
-  4,           // Bit depth -- 6 here provides maximum color options
-  1, rgbPins,  // # of matrix chains, array of 6 RGB pins for each
-  4, addrPins, // # of address pins (height is inferred), array of pins
-  clockPin, latchPin, oePin, // Other matrix control pins
-  true);       // HERE IS THE MAGIC FOR DOUBLE-BUFFERING!
-
-// Sundry globals used for animation ---------------------------------------
-
-int16_t textX = matrix.width(),  // Current text position (X)
-  textY,                         // Current text position (Y)
-  textMin,                       // Text pos. (X) when scrolled off left edge
-  hue = 0;
-char text_line_1[MAX_INPUT];  // Buffer to hold scrolling message text
-char text_line_2[MAX_INPUT];  // Buffer to hold scrolling message text
-
-// SETUP - RUNS ONCE AT PROGRAM START --------------------------------------
-
-void setup(void) {
-  Serial.begin(9600);
-
-  // Initialize matrix...
-  ProtomatterStatus status = matrix.begin();
-  Serial.print("Protomatter begin() status: ");
-  Serial.println((int)status);
-  if (status != PROTOMATTER_OK) {
-    // DO NOT CONTINUE if matrix setup encountered an error.
-    for (;;)
-      ;
-  }
-
-  // Unlike the "simple" example, we don't do any drawing in setup().
-  // But we DO initialize some things we plan to animate...
-
-  // Set up the scrolling message...
-  sprintf(text_line_1, "Jason Bruges Studio artwork text here");
-  sprintf(text_line_2, "Second Line of text to be printed");
-
-  //matrix.setFont(&FreeSans9pt7b);  // Use nice bitmap font
-  matrix.setTextWrap(false);               // Allow text off edge
-
-  int16_t x1, y1;
-  uint16_t w;
-  uint16_t h;//
-  matrix.getTextBounds(text_line_1, 0, 0, &x1, &y1, &w, &h);  // How big is it?
-  textMin = -w;                                               // All text is off left edge when it reaches this point
-                                                              // textY = matrix.height() / 2 - (y1 + h / 2); // Center text vertically
-                                                              textMin = -36; 
-  textY = 100;
-  // Note: when making scrolling text like this, the setTextWrap(false)
-  // call is REQUIRED (to allow text to go off the edge of the matrix),
-  // AND it must be BEFORE the getTextBounds() call (or else that will
-  // return the bounds of "wrapped" text).
-
-  // Set up the colors of the bouncy balls.
-  // ballcolor[0] = matrix.color565(0, 20, 0); // Dark green
-  // ballcolor[1] = matrix.color565(0, 0, 20); // Dark blue
-  // ballcolor[2] = matrix.color565(20, 0, 0); // ark red
-}
-
-bool noFont = true;
-// LOOP - RUNS REPEATEDLY AFTER SETUP --------------------------------------
-unsigned long prevMill;
-int interval = 25;
-int pos_text_line_1 = 15;
-int pos_text_line_2 = 30;
-void loop(void) {
-
-  if (millis() - prevMill > interval) {
-    prevMill = millis();
-
-    // Every frame, we clear the background and draw everything anew.
-    // This happens "in the background" with double buffering, that's
-    // why you don't see everything flicker. It requires double the RAM,
-    // so it's not practical for every situation.
-
-    matrix.fillScreen(0);  // Fill background black
-
-    // Draw the big scrolly text
-    matrix.setTextColor(color_line_1);
-    if(noFont == true){
-      matrix.setCursor(textX, pos_text_line_1 - 10);
-    } else {
-    matrix.setCursor(textX, pos_text_line_1);
-    }
-   
-    matrix.print(text_line_1);
-
-    matrix.setTextColor(color_line_2);
-    if(noFont == true){
-      matrix.setCursor(textX, pos_text_line_2 - 10);
-    } else {
-    matrix.setCursor(textX, pos_text_line_2);
-    }
-    matrix.print(text_line_2);
-
-    // Update text position for next frame. If text goes off the
-    // left edge, reset its position to be off the right edge.
-    if ((--textX) < textMin) textX = matrix.width();
-
-    matrix.show();
-  }
-
-
-  //delay(10); // 20 milliseconds = ~50 frames/second
-
-  readtext_line_1ing();
-}
-
 void readtext_line_1ing() {
   if (Serial.available() > 0)
     processIncomingByte(Serial.read());
 }
+
+bool noFont = true;
 
 void process_data(char* data) {
 
@@ -154,14 +25,14 @@ void process_data(char* data) {
       Serial.print(" / int: ");
       Serial.println(newColor);
 
-      color_line_2 = newColor;
+      //color_line_2 = newColor;
     } else {
       for (int i = 1; i < MAX_INPUT; i++) {
-        text_line_2[i - 1] = data[i];
+        //text_line_2[i - 1] = data[i];
       }
     }
 
-    Serial.println(text_line_2);
+    //Serial.println(text_line_2);
 
   } else if (data[0] == '1') {
 
@@ -209,7 +80,7 @@ void process_data(char* data) {
     newSpeed[2] = data[3];
     new_speed = (int)strtol(newSpeed, NULL, 16);
     Serial.println(new_speed);
-    interval = constrain(new_speed, 1, 100);
+    interval_fps = constrain(new_speed, 1, 100);
 
 
   } else // else if (data[0] == 'F') {
