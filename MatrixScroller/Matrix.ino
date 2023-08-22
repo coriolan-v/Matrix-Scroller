@@ -1,3 +1,10 @@
+
+
+
+// Sundry globals used for animation ---------------------------------------
+
+
+
 void setupMatrix()
 {
   // Initialize matrix...

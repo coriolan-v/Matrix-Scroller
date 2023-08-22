@@ -133,7 +133,7 @@ void loopBLE()
     //Serial.write(ch);
     receivedString += newchart;
 
-    if(liveSentenceIndex > MaxSentences)
+    if(liveSentenceIndex > sizeof(sentences))
     {
       Serial.println("too many sentences added!");
       return;
@@ -141,6 +141,10 @@ void loopBLE()
 
     if(charIndex < 100) receivedChar[charIndex] = newchart;
     charIndex++;
+
+    if(receivedString.length() == 4 && receivedString.startsWith("B")){
+      Serial.print("button: "); Serial.println(receivedString);
+    }
 
     if(ch == '\n'){
       //Serial.println("new line");

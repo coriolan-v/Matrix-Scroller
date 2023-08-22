@@ -37,30 +37,30 @@ void process_data(char* data) {
   } else if (data[0] == '1') {
 
 
-    if (data[2] == 'x') {
-      Serial.print("Updating Line 1 color: ");
+    // if (data[2] == 'x') {
+    //   Serial.print("Updating Line 1 color: ");
 
-      int newColor;
-      char arrayColor[4];
-      arrayColor[0] = data[3];
-      arrayColor[1] = data[4];
-      arrayColor[2] = data[5];
-      arrayColor[3] = data[6];
-      newColor = (int)strtol(arrayColor, NULL, 16);
-      //newColor = atoi(arrayColor);
-      //sscanf(arrayColor, "%i", &newColor);
-      //Serial.print(" / int: "); Serial.println(newColor);
+    //   int newColor;
+    //   char arrayColor[4];
+    //   arrayColor[0] = data[3];
+    //   arrayColor[1] = data[4];
+    //   arrayColor[2] = data[5];
+    //   arrayColor[3] = data[6];
+    //   newColor = (int)strtol(arrayColor, NULL, 16);
+    //   //newColor = atoi(arrayColor);
+    //   //sscanf(arrayColor, "%i", &newColor);
+    //   //Serial.print(" / int: "); Serial.println(newColor);
 
-      color_line_1 = newColor;
-    } else {
-      // if (data[0] == '1') {
+    //   color_line_1 = newColor;
+    // } else {
+    //   // if (data[0] == '1') {
 
-      Serial.print("Updating Line 1: ");
+    //   Serial.print("Updating Line 1: ");
 
-      for (int i = 1; i < MAX_INPUT; i++) {
-        text_line_1[i - 1] = data[i];
-      }
-    }
+    //   for (int i = 1; i < MAX_INPUT; i++) {
+    //     text_line_1[i - 1] = data[i];
+    //   }
+    // }
     // }
     // else {
     //   for (int i = 0; i < MAX_INPUT; i++) {

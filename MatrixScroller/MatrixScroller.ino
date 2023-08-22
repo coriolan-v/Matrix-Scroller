@@ -1,20 +1,10 @@
-// Use this website to calculate the color code: http://www.barth-dev.de/online/rgb565-color-picker/
-String sentence1 = "Is there a problem, officer?";
-String sentence2 = "You're doing great!";
-String sentence3 = "Don't worry about it";
-String sentence4 = "The current time is......... NOW";
-String sentence5 = "You look good!";
-String sentence6 = "La, tout n'est qu'ordre et beaute, Luxe, calme et volupte.";
-String sentence7 = "¡Arriba, abajo, al centro, pa' dentro!";
-String sentence8 = "";
-String sentence9 = "";
-String sentence10 = "";
+// --- ADAFRUIT nrf52840 EXPRESS --- //
 
-#define MaxSentences 20
+//#define MaxSentences 30
 #define LiveSentences 7
 int liveSentenceIndex;
 
-char sentences[MaxSentences][100]  = { 
+char sentences[][100]  = { 
 "Is there a problem, officer?",  // 1
 "You're doing great!", 
 "The current time is......... NOW",
@@ -30,8 +20,28 @@ char sentences[MaxSentences][100]  = {
 "ENM Ethical Non Mahogany wood company" //13
 };
 
+int internal_newSentence = 30000;
+int interval_fps = 50;
 
-uint16_t color_line_1 = 0x99F4;
+// Use this website to calculate the color code: http://www.barth-dev.de/online/rgb565-color-picker/
+uint16_t colors[] = {
+  0x99F4,
+  0xF81E, // pink-ish
+  0x03DF, // light blue
+  0x07E9, // green apple
+  0xFFA0, // yellow
+  0xF800, // red
+  0xA81F, // purple
+  0xFD60, // orange
+  0x001F, // dark blue
+};
+
+int currentColor = 0;
+
+
+int yposition = 15;
+
+// ------------
 
 #define MAX_INPUT 1000
 
@@ -51,8 +61,6 @@ Adafruit_Protomatter matrix(
   clockPin, latchPin, oePin, // Other matrix control pins
   true);       // HERE IS THE MAGIC FOR DOUBLE-BUFFERING!
 
-// Sundry globals used for animation ---------------------------------------
-
 int16_t textX = matrix.width(),  // Current text position (X)
   textY,                         // Current text position (Y)
   textMin,                       // Text pos. (X) when scrolled off left edge
@@ -63,13 +71,13 @@ char text_line_1[MAX_INPUT];  // Buffer to hold scrolling message text
 int sentenceIndex = 0;
 int xposition = matrix.width();
 int xposition_end;
-int yposition = 18;
+
 
 void setup(void) {
 
   Serial.begin(9600);
 
-  liveSentenceIndex = MaxSentences - LiveSentences;
+  liveSentenceIndex = sizeof(sentences) - LiveSentences;
 
   xposition_end = findEndXPos(sentenceIndex);
 
@@ -82,30 +90,33 @@ void loop(void) {
 
   loopBLE();
 
-  newLoopMatrix();
+  displayText();
 
   readtext_line_1ing();
 }
 
 
-int internal_newSentence = 30000;
-int interval_fps = 50;
+
 unsigned long prevMill_newSentence = 0;
 unsigned long prevMill_fps = 0;
 
-void newLoopMatrix() {
+void displayText() {
 
   if(millis() - prevMill_newSentence > internal_newSentence) {
     prevMill_newSentence  = millis();
 
     sentenceIndex++;
+    if(sentenceIndex >= sizeof(sentences) || sentences[sentenceIndex][0] == 0) sentenceIndex = 0;
     
-    if(sentenceIndex >= MaxSentences || sentences[sentenceIndex][0] == 0){
-        sentenceIndex = 0;
-    } 
-    
-    Serial.print("Timer new sentence: ");Serial.println(sentenceIndex);
+    Serial.print("New sentence: ");Serial.print(sentenceIndex); 
+    Serial.print(", "); Serial.println(sentences[sentenceIndex]);
 
+    currentColor++;
+    if(currentColor > sizeof(colors)) currentColor = 0;
+
+    Serial.print("New color: ");Serial.print(currentColor); 
+    Serial.print(", "); Serial.println(colors[currentColor]);
+    
     xposition_end = findEndXPos(sentenceIndex);
 
     xposition = matrix.width();
@@ -121,7 +132,7 @@ void newLoopMatrix() {
     matrix.fillScreen(0);  // Fill background black
 
     // Draw the big scrolly text
-    matrix.setTextColor(color_line_1);
+    matrix.setTextColor(colors[currentColor]);
     matrix.setCursor(xposition, yposition);
 
     matrix.print(sentences[sentenceIndex]);
