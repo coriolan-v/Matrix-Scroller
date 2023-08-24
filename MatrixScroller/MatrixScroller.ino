@@ -1,6 +1,6 @@
 // --- ADAFRUIT nrf52840 EXPRESS --- //
 
-//#define MaxSentences 30
+#define MaxSentences 30
 #define LiveSentences 7
 int liveSentenceIndex;
 
@@ -13,14 +13,15 @@ char sentences[][100]  = {
 "It was better next year",
 "Gaffer tape fixes everything",
 "Less drama, more techno",
-"¡Arriba, abajo, al centro, pa' dentro!",
+"Arriba, abajo, al centro, pa dentro",
 "Malkovich Malkovich Malkovich Malkovich Malkovich Malkovich Malkovich Malkovich",
 "You only live once... broke and in poor health",
 "Advertiste you joke here! Call 1-800-CRINGE",
-"ENM Ethical Non Mahogany wood company" //13
+"ENM Ethical Non-Mahogany wood company" //13
 };
 
-int internal_newSentence = 30000;
+int numberOfPasses = 1;
+int internal_newSentence = 10000;
 int interval_fps = 50;
 
 // Use this website to calculate the color code: http://www.barth-dev.de/online/rgb565-color-picker/
@@ -39,11 +40,12 @@ uint16_t colors[] = {
 int currentColor = 0;
 
 
-int yposition = 15;
+int yposition = 12;
 
 // ------------
 
 #define MAX_INPUT 1000
+int availableLiveSentences;
 
 #include <Adafruit_Protomatter.h>
 
@@ -77,13 +79,15 @@ void setup(void) {
 
   Serial.begin(9600);
 
-  liveSentenceIndex = sizeof(sentences) - LiveSentences;
-
-  xposition_end = findEndXPos(sentenceIndex);
-
   setupBLE();
 
   setupMatrix();
+
+  
+  availableLiveSentences = MaxSentences - LiveSentences;
+  liveSentenceIndex = availableLiveSentences;
+
+  xposition_end = findEndXPos(sentenceIndex);
 }
 
 void loop(void) {
@@ -99,27 +103,14 @@ void loop(void) {
 
 unsigned long prevMill_newSentence = 0;
 unsigned long prevMill_fps = 0;
+int passes = 0;
 
 void displayText() {
 
   if(millis() - prevMill_newSentence > internal_newSentence) {
     prevMill_newSentence  = millis();
 
-    sentenceIndex++;
-    if(sentenceIndex >= sizeof(sentences) || sentences[sentenceIndex][0] == 0) sentenceIndex = 0;
     
-    Serial.print("New sentence: ");Serial.print(sentenceIndex); 
-    Serial.print(", "); Serial.println(sentences[sentenceIndex]);
-
-    currentColor++;
-    if(currentColor > sizeof(colors)) currentColor = 0;
-
-    Serial.print("New color: ");Serial.print(currentColor); 
-    Serial.print(", "); Serial.println(colors[currentColor]);
-    
-    xposition_end = findEndXPos(sentenceIndex);
-
-    xposition = matrix.width();
   }
 
 
@@ -137,9 +128,18 @@ void displayText() {
 
     matrix.print(sentences[sentenceIndex]);
 
-    Serial.println(xposition);
+    //Serial.println(xposition);
 
-    if ((--xposition) < xposition_end) xposition = matrix.width();
+    xposition = xposition - 1;
+    if (xposition < xposition_end){
+        xposition = matrix.width();
+        passes++;
+        if(passes > numberOfPasses)
+        {
+         passes = 0; 
+         nextSentence();
+        }
+    } 
 
     matrix.show();
 
