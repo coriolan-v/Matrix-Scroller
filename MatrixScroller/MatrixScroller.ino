@@ -11,7 +11,7 @@ char sentences[][100]  = {
 "You look good! Yes you!",
 "Birmingham changed my life",
 "It was better next year",
-"Gaffer tape fixes everything",
+"Dont forget your pelvic floor exercises",
 "Less drama, more techno",
 "Arriba, abajo, al centro, pa dentro",
 "Malkovich Malkovich Malkovich Malkovich Malkovich Malkovich Malkovich Malkovich",
@@ -20,7 +20,7 @@ char sentences[][100]  = {
 "ENM Ethical Non-Mahogany wood company" //13
 };
 
-int numberOfPasses = 1;
+int numberOfPasses = 6;
 int internal_newSentence = 10000;
 int interval_fps = 50;
 
