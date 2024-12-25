@@ -16,7 +16,7 @@ char sentences[][100]  = {
 "Arriba, abajo, al centro, pa dentro",
 "Malkovich Malkovich Malkovich Malkovich Malkovich Malkovich Malkovich Malkovich",
 "You only live once... broke and in poor health",
-"Advertiste you joke here! Call 1-800-CRINGE",
+//"Advertiste you joke here! Call 1-800-CRINGE",
 "ENM Ethical Non-Mahogany wood company" //13
 };
 
